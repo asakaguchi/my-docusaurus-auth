@@ -136,16 +136,6 @@ const config = {
         darkTheme: prismThemes.dracula,
       },
     }),
-
-    plugins: [
-      [
-        '@docusaurus/plugin-content-docs',
-        {
-          sidebarPath: require.resolve('./sidebars.js'),
-          editUrl: 'https://github.com/asakaguchi/my-docusaurus-auth/edit/main/',
-        },
-      ],
-    ],
 };
 
 export default config;
