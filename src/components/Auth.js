@@ -1,56 +1,70 @@
 import React, { useState } from 'react';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '@site/src/utils/firebase';
+import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { useAuth } from '@site/src/utils/firebase';
+import BrowserOnly from '@docusaurus/BrowserOnly';
 
-export function Auth() {
+function AuthContent({ children }) {
+  const { user, auth } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [user, setUser] = useState(null);
   const [error, setError] = useState('');
 
   const signIn = async (e) => {
     e.preventDefault();
+    setError('');
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      setUser(userCredential.user);
-      setError('');
+      await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
       setError('ログインに失敗しました: ' + error.message);
     }
   };
 
-  const signOut = () => {
-    auth.signOut();
-    setUser(null);
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      setError('ログアウトに失敗しました: ' + error.message);
+    }
   };
 
   if (user) {
     return (
       <div>
-        <p>ログイン中: {user.email}</p>
-        <button onClick={signOut}>ログアウト</button>
+        <p>ログイン中のユーザー: {user.email}</p>
+        <button onClick={handleSignOut}>ログアウト</button>
+        {children}
       </div>
     );
   }
 
   return (
-    <form onSubmit={signIn}>
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="メールアドレス"
-        required
-      />
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="パスワード"
-        required
-      />
-      <button type="submit">ログイン</button>
+    <div>
+      <form onSubmit={signIn}>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="メールアドレス"
+          required
+        />
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="パスワード"
+          required
+        />
+        <button type="submit">ログイン</button>
+      </form>
       {error && <p style={{color: 'red'}}>{error}</p>}
-    </form>
+    </div>
+  );
+}
+
+export function Auth({ children }) {
+  return (
+    <BrowserOnly>
+      {() => <AuthContent>{children}</AuthContent>}
+    </BrowserOnly>
   );
 }
