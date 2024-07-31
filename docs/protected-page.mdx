@@ -3,14 +3,14 @@ title: 保護されたページ
 ---
 
 import { Auth } from '@site/src/components/Auth';
-import { ProtectedContent } from '@site/src/components/ProtectedContent';
+import { AuthGuard } from '@site/src/components/AuthGuard';
 
 # 保護されたページ
 
 <Auth>
-  <ProtectedContent>
+  <AuthGuard>
     このページの内容は、ログイン後にのみ表示されます。
     
     ここに保護されたコンテンツを記述します。
-  </ProtectedContent>
+  </AuthGuard>
 </Auth>

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { useAuth } from '@site/src/utils/firebase';
+import { useAuth } from '@site/src/contexts/AuthContext';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 
 function AuthContent({ children }) {
-  const { user, auth } = useAuth();
+  const { user, auth, loading } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -26,6 +26,10 @@ function AuthContent({ children }) {
       setError('ログアウトに失敗しました: ' + error.message);
     }
   };
+
+  if (loading) {
+    return <div>読み込み中...</div>;
+  }
 
   if (user) {
     return (
